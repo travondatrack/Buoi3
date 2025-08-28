@@ -16,7 +16,7 @@ FROM tomcat:9-jdk21
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy WAR từ stage 1 vào Tomcat
-COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/Baitap2.war
+COPY --from=builder /app/target/Baitap2.war /usr/local/tomcat/webapps/ROOT.war
 
 # Expose cổng
 EXPOSE 8080
