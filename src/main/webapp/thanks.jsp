@@ -1,29 +1,42 @@
-<!doctype html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Murach's Java Servlets and JSP</title>
-    <link rel="stylesheet" href="styles/main.css" type="text/css"/>
+    <title>Thanks</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: teal; }
+        label { font-weight: bold; }
+    </style>
 </head>
-
 <body>
     <h1>Thanks for joining our email list</h1>
-
     <p>Here is the information that you entered:</p>
 
-    <label>Email: </label>
-    <span>${user.email}</span><br>
-    <label>First Name: </label>
-    <span>${user.firstName}</span><br>
-    <label>Last Name: </label>
-    <span>${user.lastName}</span><br>
+    <p><label>Email:</label> ${email}</p>
+    <p><label>First Name:</label> ${firstName}</p>
+    <p><label>Last Name:</label> ${lastName}</p>
+    <p><label>Date of Birth:</label> ${dob}</p>
+    <p><label>Heard From:</label> ${heardFrom}</p>
 
-    <p>To enter another email address, click on the Back button in your browser or the Return button shown below.</p>
+    <p><label>Wants Updates:</label>
+        <c:choose>
+            <c:when test="${wantsUpdates}">Có</c:when>
+            <c:otherwise>Không</c:otherwise>
+        </c:choose>
+    </p>
 
-    <form action="" method="get">
-        <input type="hidden" name="action" value="join">
+    <p><label>Email OK:</label>
+        <c:choose>
+            <c:when test="${emailOK}">Có</c:when>
+            <c:otherwise>Không</c:otherwise>
+        </c:choose>
+    </p>
+
+    <p><label>Contact Via:</label> ${contact}</p>
+
+    <form action="index.html">
         <input type="submit" value="Return">
     </form>
-
 </body>
 </html>

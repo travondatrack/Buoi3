@@ -1,54 +1,108 @@
 package murach.email;
 
-import java.io.*;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import murach.business.User;
 import murach.data.UserDB;
 
+@WebServlet("/emailList")
 public class EmailListServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(EmailListServlet.class.getName());
 
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
+        logger.info("Received POST request");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         String url = "/index.html";
 
-        // get current action
         String action = request.getParameter("action");
         if (action == null) {
-            action = "join";  // default action
+            action = "join";
         }
 
-        // perform action and set URL to appropriate page
         if (action.equals("join")) {
-            url = "/index.html"; // the "join" page
+            url = "/index.html";
         } else if (action.equals("add")) {
-            // get parameters from the request
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
-            String email = request.getParameter("email");
+            String firstName = trimOrEmpty(request.getParameter("firstName"));
+            String lastName  = trimOrEmpty(request.getParameter("lastName"));
+            String email     = trimOrEmpty(request.getParameter("email"));
 
-            // store data in User object and save User object in db
-            User user = new User(firstName, lastName, email);
-            UserDB.insert(user);
+            String dob = trimOrEmpty(request.getParameter("dob"));
+            String heardFrom = trimOrEmpty(request.getParameter("heardFrom"));
+            String wantsUpdates = request.getParameter("wantsUpdates");
+            String emailOK = request.getParameter("emailOK");
+            String contact = trimOrEmpty(request.getParameter("contact"));
 
-            // set User object in request object and set URL
-            request.setAttribute("user", user);
-            url = "/thanks.jsp"; // the "thanks" page
+            logger.log(Level.INFO, "Action: {0}", action);
+            logger.log(Level.INFO, "First Name: {0}", firstName);
+            logger.log(Level.INFO, "Last Name: {0}", lastName);
+            logger.log(Level.INFO, "Email: {0}", email);
+            logger.log(Level.INFO, "DOB: {0}", dob);
+            logger.log(Level.INFO, "Heard From: {0}", heardFrom);
+            logger.log(Level.INFO, "Wants Updates: {0}", wantsUpdates);
+            logger.log(Level.INFO, "Email OK: {0}", emailOK);
+            logger.log(Level.INFO, "Contact: {0}", contact);
+
+            String message = null;
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
+                message = "Vui lòng nhập đầy đủ họ, tên và email.";
+            } else if (!isValidEmail(email)) {
+                message = "Định dạng email không hợp lệ.";
+            }
+
+            if (message != null) {
+                request.setAttribute("user", new User(firstName, lastName, email));
+                request.setAttribute("message", message);
+                url = "/index.html";
+            } else {
+                User user = new User(firstName, lastName, email);
+                UserDB.insert(user);
+
+                request.setAttribute("user", user);
+                request.setAttribute("email", email);
+                request.setAttribute("firstName", firstName);
+                request.setAttribute("lastName", lastName);
+                request.setAttribute("dob", dob);
+                request.setAttribute("heardFrom", heardFrom);
+                request.setAttribute("wantsUpdates", wantsUpdates != null);
+                request.setAttribute("emailOK", emailOK != null);
+                request.setAttribute("contact", contact);
+                url = "/thanks.jsp";
+            }
         }
 
-        // forward request and response objects to specified URL
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
     }
+
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request, response);
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        getServletContext()
+                .getRequestDispatcher("/index.html")
+                .forward(request, response);
+    }
+
+    private static String trimOrEmpty(String s) {
+        return s == null ? "" : s.trim();
+    }
+
+    private static boolean isValidEmail(String email) {
+        return email != null && email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
     }
 }

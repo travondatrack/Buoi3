@@ -17,11 +17,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Jakarta Servlet API cho Servlet 6 (Jakarta EE 10). Scope provided vì container sẽ cung cấp lúc chạy -->
+        <!-- Javax Servlet API cho Servlet 4 (Java EE). Scope provided vì container sẽ cung cấp lúc chạy -->
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
