@@ -9,8 +9,8 @@ COPY src ./src
 # Build file WAR
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run với Tomcat
-FROM tomcat:10.1-jdk21
+# Stage 2: Run với Tomcat 9 (thay vì Tomcat 10)
+FROM tomcat:9-jdk21
 
 # Xóa webapp mặc định của Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
